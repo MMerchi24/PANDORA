@@ -1,37 +1,42 @@
 import { When, Then, Given } from "@badeball/cypress-cucumber-preprocessor";
 import { LoginPage } from "../pages/loginPage"
+import { CommonPage } from "../pages/commonPage"
 
-let loginPage = new LoginPage();
+// Instanciamos loginPage
+let loginPage = new LoginPage(); 
+let commonPage = new CommonPage();
 
-Given("I type standard_user on the Username credential input", () => {
-  loginPage.typeStandardUser();
+// Seteamos los valores iniciales del objeto loginPage
+loginPage.inputUsernameSelector = '[data-test="username"]';
+loginPage.inputPasswordSelector = '[data-test="password"]';
+loginPage.buttonSelector = '[data-test="login-button"]';
+loginPage.username = 'standard_user';
+loginPage.passwordName = 'secret_sauce';
+
+/**
+ * Para rellenar un input en Cypress necesitamos:
+ * 1 - Selector 
+ * 2 - Texto
+ */
+
+When("I type a username in the input username and check the value is {string}", (username) => {
+    loginPage.inputTypeTest(loginPage.inputUsernameSelector, username);
 });
 
-When("I type Locked_Out_User on the Username credential input", () => {
-  loginPage.typeLockedOutUser();
+When("I type a password in the input password and check the value is {string}", (passwordName) => {
+    loginPage.inputTypeTest(loginPage.inputPasswordSelector, passwordName);    
 });
 
-Then("I type secret_sauce on the password credential input", () => {
-  loginPage.typeSecretSaucePassword();
+When("I click on login button", () => {
+    loginPage.buttonClick(loginPage.buttonSelector);
 });
 
-Then("I type {string} on the Username credential input", (userName) => {
-  loginPage.typeUserName(userName);
+
+  
+Then("The webpage change to {string}", (url) => {
+    commonPage.currentUrlCheck(url);
 });
 
-Then("I type {string} on the password credential input", (password) => {
-  loginPage.typePassword(password);
+Given ('I login with the user and password correct', () => {
+    loginPage.loginTestButton(loginPage.inputUsernameSelector, loginPage.username, loginPage.inputPasswordSelector, loginPage.passwordName, loginPage.buttonSelector);
 });
-
-Then("I type on the credential input {string} the text value {string}", (input, text) => {
-  loginPage.typeOnInputByDataTest(input, text);
-});
-
-Then("I click on the login button", () => {
-  loginPage.clickLoginButton();
-});
-
-Given ("I check the status for the login logo is {string}", (status) => {
-  loginPage.checkLoginLogo(status);
-});
-
